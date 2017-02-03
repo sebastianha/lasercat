@@ -3,6 +3,7 @@
 // Setup basic express server
 var express = require('express');
 var app = express();
+var uuidV4 = require('uuid/v4');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
@@ -14,18 +15,55 @@ server.listen(port, function () {
 // Routing
 app.use(express.static(__dirname + '/public'));
 
-// Chatroom
-
-var numUsers = 0;
+users = [];
+currentUser = -1;
+setInterval(function() {
+	if(users[currentUser] !== undefined && users[currentUser].socket !== undefined) {
+		users[currentUser].socket.emit("stop");
+	}
+	currentUser++;
+	if(currentUser >= users.length) {
+		currentUser = 0;
+	}
+	if(users[currentUser] === undefined) {
+		currentUser = 0;
+	}
+	if(currentUser === 0 && users[0] === undefined) {
+		return;
+	}
+	if(users[currentUser] !== undefined && users[currentUser].socket !== undefined) {
+		users[currentUser].socket.emit("start");
+	}
+	console.log(currentUser + ": " + users[currentUser].uuid)
+}, 1000);
 
 io.on('connection', function (socket) {
-	console.log("CONNECT");
+// 	console.log("CONNECT");
 
+	var uuid = uuidV4();
+	users.push({socket: socket, uuid: uuid});
+// 	console.log(users);
+	
 	socket.on('button', function (data) {
-		console.log("BUTTON: " + data.direction);
+		for(var u=0; u<users.length; u++) {
+			if(users[u].uuid === uuid && u === currentUser) {
+				console.log("BUTTON ALLOW: " + data.direction);
+				continue;
+			}
+		}
 	});
 
 	socket.on('disconnect', function () {
-		console.log("DISCONNECT");
+// 		console.log("DISCONNECT");
+		for(var u=0; u<users.length; u++) {
+			if(users[u].uuid === uuid) {
+				users.splice(u, 1);
+				if(u < currentUser) {
+					currentUser--;
+				}
+				continue;
+			}
+		}
+// 		console.log(users);
 	});
 });

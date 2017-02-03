@@ -1,0 +1,4 @@
+RaspberryPi + Kamera
+Laserpointer
+Servo
+Netzteil
