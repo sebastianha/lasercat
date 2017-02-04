@@ -4,7 +4,13 @@
 var express = require('express');
 var app = express();
 var uuidV4 = require('uuid/v4');
-var server = require('http').createServer(app);
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+var server = require('https').createServer(credentials, app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 
