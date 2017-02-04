@@ -37,9 +37,16 @@ setInterval(function() {
 	if(currentUser === 0 && users[0] === undefined) {
 		return;
 	}
-	if(users[currentUser] !== undefined && users[currentUser].socket !== undefined) {
-        io.emit("waitingTimeUpdate", {currentUser: currentUser, count: users.length, currentUuid: users[currentUser].uuid});
-        users[currentUser].socket.emit("start", {currentUser: currentUser, userCount: users.length});
+	for(var i=0; i < users.length; i++) {
+        if (users[i] !== undefined && users[i].socket !== undefined) {
+            users[i].socket.emit("waitingTimeUpdate", {
+                currentUser: currentUser,
+                count: users.length,
+                currentUuid: users[currentUser].uuid,
+				myPos: i
+            });
+            users[currentUser].socket.emit("start", {currentUser: currentUser, userCount: users.length});
+        }
     }
 	console.log(currentUser + ": " + users[currentUser].uuid)
 }, 5000);

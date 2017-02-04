@@ -46,10 +46,17 @@ $(function() {
     socket.on("start", function(data) {
         console.log("command obtained");
         $("#lscat-video-area").css("border", "5px solid green");
+        $(".lscat-ctrls").show();
+        if(shouldShowNipple()) {
+            showNipple();
+        }
+
     });
     socket.on("stop", function(data) {
         console.log("command lost");
         $("#lscat-video-area").css("border", "5px solid white");
+        $(".lscat-ctrls").hide();
+        hideNipple();
     });
 
     socket.on("waitingTimeUpdate", function(data) {
@@ -58,8 +65,14 @@ $(function() {
                 clearInterval(waitingTimeHandler);
             }
             timeToWait = 0;
+            $(".lscar-waiting-timer").html(timeToWait)
         } else {
-            timeToWait = (data.count - data.currentUser) * activeSlotTime;
+            if(data.currentUser < data.myPos) {
+                // current user is in front of me
+                timeToWait = (data.myPos - data.currentUser) * activeSlotTime;
+            } else {
+                timeToWait = (data.count - data.currentUser + data.myPos) * activeSlotTime;
+            }
             var time = timeToWait;
             waitingTimeHandler = setInterval(function () {
                 time -= 1;
