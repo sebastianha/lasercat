@@ -72,7 +72,7 @@ io.on('connection', function (socket) {
 		for(var u=0; u<users.length; u++) {
 			if(users[u].uuid === uuid) {
 				users.splice(u, 1);
-				if(u < currentUser) {
+				if(u <= currentUser) {
 					currentUser--;
 				}
 				continue;
