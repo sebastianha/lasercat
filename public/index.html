@@ -1,12 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>LaserCat</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Lasercat</title>
+	<link rel="stylesheet" href="/css/bootstrap.css" />
+	<link rel="stylesheet" href="/css/app.css" />
 </head>
 <body>
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="/main.js"></script>
-	<button onclick="up()">up</button>
+<nav class="navbar navbar-light bg-faded">
+	<a class="navbar-brand" href="#">
+		<h1>LASERCAT!!</h1>
+	</a>
+</nav>
+<div class="container">
+
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div id="lscat-video-area" class="col-md-8">
+			<!-- video content -->
+			<div style="width: 100%; height: 580px; background-color: grey;"></div>
+			<!-- / video content -->
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+
+
+	<div class="row hidden-xs-down">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<!-- contorls -->
+			<div class="lscat-ctrls">
+				<div class="row">
+					<div class="col-4"></div>
+					<div class="col-4"><button class="lscat-ctrl-btn" data-direction="up">UP</button></div>
+					<div class="col-4"></div>
+				</div>
+				<div class="row">
+					<div class="col-4"><button class="lscat-ctrl-btn" data-direction="left">LEFT</button></div>
+					<div class="col-4"><button class="lscat-ctrl-btn" data-direction="down">DOWN</button></div>
+					<div class="col-4"><button class="lscat-ctrl-btn" data-direction="right">RIGHT</button></div>
+				</div>
+			</div>
+			<!-- / controls -->
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+
+</div>
+<div id="desktopTest" class="hidden-xs-down"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/nipplejs.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>
