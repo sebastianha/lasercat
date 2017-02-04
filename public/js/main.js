@@ -4,75 +4,94 @@ var keyIsPressed = false;
 var lastDirection = null;
 var lastShouldShowNipple = null;
 var manager = null;
+var initialManagerCreate=true;
 
+$(function() {
 // --- Events
-$('.lscat-ctrl-btn')
-	.mousedown(function(event) {
-		var direction = $(event.currentTarget).attr("data-direction");
-		console.log("fired");
-		emitEvent(direction, "down");
-	}).mouseup(function(event) {
-    	var direction = $(event.currentTarget).attr("data-direction");
-    	emitEvent(direction, "up");
-	});
+    $('.lscat-ctrl-btn')
+        .mousedown(function(event) {
+            var direction = $(event.currentTarget).attr("data-direction");
+            console.log("fired");
+            emitEvent(direction, "down");
+        }).mouseup(function(event) {
+        var direction = $(event.currentTarget).attr("data-direction");
+        emitEvent(direction, "up");
+    });
 
+    $(window)
+        .keydown(function(event) {
+            handleKeyEvent("down");
+            keyIsPressed = true;
+            console.log(event.which);
+        }).keyup(function(event) {
+        keyIsPressed = false;
+        handleKeyEvent("up");
+        console.log(event.which);
+    });
 
-$(window)
-	.keydown(function(event) {
-		handleKeyEvent("down");
-        keyIsPressed = true;
-		console.log(event.which);
-	}).keyup(function(event) {
-	    keyIsPressed = false;
-		handleKeyEvent("up");
-		console.log(event.which);
-	});
+    $(window).resize(function() {
+        showOrHideNipple();
+    });
 
-$(window).resize(function() {
-    var ssn = shouldShowNipple();
-	if(lastShouldShowNipple != ssn) {
-		if(ssn) {
-			console.log("here");
-            manager = nipplejs.create({
-                zone: document.getElementById("lscat-video-area"),
-                mode: 'static',
-                position: {right: '100px', bottom: '80px'},
-                color: 'red'
-            });
-
-            manager.on("dir", function (event, nipple) {
-                var direction = nipple.direction.angle;
-                if (lastDirection != direction) {
-                    // direction changed
-                    emitEvent(lastDirection, "up");
-                }
-                lastDirection = direction;
-                console.log(direction);
-                emitEvent(direction, "down");
-            });
-
-            manager.on("end", function (event, nipple) {
-                console.log("end");
-                emitEvent(lastDirection, "up");
-                lastDirection = null;
-            });
-		} else {
-			if(manager != null) {
-				manager.destroy();
-
-			}
-		}
-		lastShouldShowNipple = ssn;
-	}
-
+    showOrHideNipple();
 });
+
+// --- Methods
+function showOrHideNipple() {
+    var ssn = shouldShowNipple();
+    if(lastShouldShowNipple != ssn) {
+        if(ssn) {
+            if(initialManagerCreate) {
+                manager = createNippleManager();
+                initialManagerCreate = false;
+            }
+            showNipple();
+        } else {
+            hideNipple();
+        }
+        lastShouldShowNipple = ssn;
+    }
+}
+
+function createNippleManager() {
+    var manager = nipplejs.create({
+        zone: document.getElementById("lscat-video-area"),
+        mode: 'static',
+        position: {right: '100px', bottom: '80px'},
+        color: 'red'
+    });
+
+    manager.on("dir", function (event, nipple) {
+        var direction = nipple.direction.angle;
+        if (lastDirection != direction) {
+            // direction changed
+            emitEvent(lastDirection, "up");
+        }
+        lastDirection = direction;
+        console.log(direction);
+        emitEvent(direction, "down");
+    });
+
+    manager.on("end", function (event, nipple) {
+        console.log("end");
+        emitEvent(lastDirection, "up");
+        lastDirection = null;
+    });
+    return manager;
+}
+
+function showNipple() {
+    $(".nipple").show();
+}
+
+function hideNipple() {
+    $(".nipple").hide();
+}
 
 function shouldShowNipple() {
     return ($('#desktopTest').is(':hidden'));
 }
 
-
-// --- Methods
 function handleKeyEvent(action) {
 	if(keyIsPressed == true) {
         return;

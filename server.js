@@ -37,6 +37,14 @@ setInterval(function() {
 	console.log(currentUser + ": " + users[currentUser].uuid)
 }, 1000);
 
+var handler;
+
+function doMove(direction) {
+    return function() {
+        console.log("BUTTON: moving in direction: " + direction);
+    }
+}
+
 io.on('connection', function (socket) {
 // 	console.log("CONNECT");
 
@@ -47,7 +55,13 @@ io.on('connection', function (socket) {
 	socket.on('button', function (data) {
 		for(var u=0; u<users.length; u++) {
 			if(users[u].uuid === uuid && u === currentUser) {
-				console.log("BUTTON ALLOW: " + data.direction);
+                if(data.action === "down") {
+                    console.log("server triggered");
+                    doMove(data.direction)();
+                    handler = setInterval(doMove(data.direction), 500);
+                } else if(data.action == "up") {
+                    clearInterval(handler);
+                }
 				continue;
 			}
 		}
