@@ -39,7 +39,9 @@ $(function() {
         showOrHideNipple();
     });
 
-    showOrHideNipple();
+    hideNipple();
+    $(".lscat-ctrls").hide();
+
 
     socket.on("connected", function(data) {
         myId = data.uuid;
@@ -60,6 +62,10 @@ $(function() {
         $(".lscat-ctrls").hide();
         hideNipple();
         isActive = false;
+        emitEvent("up", "up");
+        emitEvent("down", "up");
+        emitEvent("left", "up");
+        emitEvent("right", "up");
     });
 
     socket.on("waitingTimeUpdate", function(data) {
@@ -79,6 +85,9 @@ $(function() {
             var time = timeToWait;
             waitingTimeHandler = setInterval(function () {
                 time -= 1;
+                if(time < 0) {
+                    time = 0;
+                }
                 $(".lscar-waiting-timer").html(time);
             }, 1000);
         }
@@ -91,6 +100,14 @@ $(function() {
 });
 
 // --- Methods
+function showOrHideBtns() {
+    if(!shouldShowNipple()) {
+        $(".lscat-ctrls").show();
+    } else {
+        $(".lscat-ctrls").hide();
+    }
+}
+
 function showOrHideNipple() {
     var ssn = shouldShowNipple();
     if(lastShouldShowNipple != ssn) {
