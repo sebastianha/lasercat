@@ -28,7 +28,7 @@ sport.on("open", function(){
 	app.use(express.static(__dirname + '/public'));
 
 	users = [];
-	currentUser = -1;
+	currentUser = 0;
 	
 	var handler;
 	
@@ -39,12 +39,12 @@ sport.on("open", function(){
 		}
 		currentUser++;
 		if(currentUser >= users.length) {
-			currentUser = 0;
+			currentUser = 1;
 		}
 		if(users[currentUser] === undefined) {
-			currentUser = 0;
+			currentUser = 1;
 		}
-		if(currentUser === 0 && users[0] === undefined) {
+		if(currentUser === 1 && users[1] === undefined) {
 			return;
 		}
 		for(var i=0; i < users.length; i++) {
@@ -68,6 +68,12 @@ sport.on("open", function(){
 			}
 			if(direction === "down") {
 				sport.write("o-1\n");
+			}
+			if(direction === "left") {
+				sport.write("u1\n");
+			}
+			if(direction === "right") {
+				sport.write("u-1\n");
 			}
 			console.log("BUTTON: moving in direction: " + direction);
 		}
