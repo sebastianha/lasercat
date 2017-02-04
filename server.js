@@ -64,10 +64,10 @@ sport.on("open", function(){
 	function doMove(direction) {
 		return function() {
 			if(direction === "up") {
-				sport.write("o-1\n");
+				sport.write("o1\n");
 			}
 			if(direction === "down") {
-				sport.write("o1\n");
+				sport.write("o-1\n");
 			}
 			console.log("BUTTON: moving in direction: " + direction);
 		}
