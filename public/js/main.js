@@ -5,6 +5,11 @@ var lastDirection = null;
 var lastShouldShowNipple = null;
 var manager = null;
 var initialManagerCreate=true;
+var timeToWait=null;
+var activeSlotTime=5;
+var waitingTimeHandler = null;
+var myId = null;
+
 
 $(function() {
 // --- Events
@@ -34,6 +39,39 @@ $(function() {
     });
 
     showOrHideNipple();
+
+    socket.on("connected", function(data) {
+        myId = data.uuid;
+    });
+    socket.on("start", function(data) {
+        console.log("command obtained");
+        $("#lscat-video-area").css("border", "5px solid green");
+    });
+    socket.on("stop", function(data) {
+        console.log("command lost");
+        $("#lscat-video-area").css("border", "5px solid white");
+    });
+
+    socket.on("waitingTimeUpdate", function(data) {
+        if(data.currentUuid === myId) {
+            if(waitingTimeHandler) {
+                clearInterval(waitingTimeHandler);
+            }
+            timeToWait = 0;
+        } else {
+            timeToWait = (data.count - data.currentUser) * activeSlotTime;
+            var time = timeToWait;
+            waitingTimeHandler = setInterval(function () {
+                time -= 1;
+                $(".lscar-waiting-timer").html(time);
+            }, 1000);
+        }
+    });
+
+    socket.on("userCountChange", function(data) {
+        console.log("user count: " + data.count);
+        $(".lscat-usr-count").html(data.count);
+    });
 });
 
 // --- Methods

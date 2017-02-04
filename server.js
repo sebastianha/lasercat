@@ -32,10 +32,11 @@ setInterval(function() {
 		return;
 	}
 	if(users[currentUser] !== undefined && users[currentUser].socket !== undefined) {
-		users[currentUser].socket.emit("start");
-	}
+        io.emit("waitingTimeUpdate", {currentUser: currentUser, count: users.length, currentUuid: users[currentUser].uuid});
+        users[currentUser].socket.emit("start", {currentUser: currentUser, userCount: users.length});
+    }
 	console.log(currentUser + ": " + users[currentUser].uuid)
-}, 1000);
+}, 5000);
 
 var handler;
 
@@ -46,12 +47,14 @@ function doMove(direction) {
 }
 
 io.on('connection', function (socket) {
-// 	console.log("CONNECT");
-
+	console.log("CONNECT");
 	var uuid = uuidV4();
 	users.push({socket: socket, uuid: uuid});
-// 	console.log(users);
-	
+
+	socket.emit("connected", {uuid: uuid});
+    io.emit("userCountChange", {currentUser: (users.lengt-1), count: users.length});
+    console.log("current users: " + users.length);
+
 	socket.on('button', function (data) {
 		for(var u=0; u<users.length; u++) {
 			if(users[u].uuid === uuid && u === currentUser) {
@@ -68,7 +71,7 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect', function () {
-// 		console.log("DISCONNECT");
+ 		console.log("DISCONNECT");
 		for(var u=0; u<users.length; u++) {
 			if(users[u].uuid === uuid) {
 				users.splice(u, 1);
@@ -78,6 +81,9 @@ io.on('connection', function (socket) {
 				continue;
 			}
 		}
-// 		console.log(users);
+        console.log("current users: " + users.length);
+        io.emit("userCountChange", {currentUser: null, count: users.length});
 	});
+
+
 });
