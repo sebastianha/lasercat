@@ -247,7 +247,7 @@ var broadcast = function(config) {
 
 var config = {
 	openSocket: function(config) {
-		var channel = "lasercat";
+		var channel = "lasercat2";
 		var socket = new Firebase('https://webrtc.firebaseIO.com/' + channel);
 		socket.channel = channel;
 		socket.on("child_added", function(data) {
