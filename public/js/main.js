@@ -9,6 +9,7 @@ var timeToWait=null;
 var activeSlotTime=5;
 var waitingTimeHandler = null;
 var myId = null;
+var isActive = false;
 
 
 $(function() {
@@ -45,18 +46,20 @@ $(function() {
     });
     socket.on("start", function(data) {
         console.log("command obtained");
-        $("#lscat-video-area").css("border", "5px solid green");
+        $(".lscat-video-area").css("border", "5px solid green");
         $(".lscat-ctrls").show();
         if(shouldShowNipple()) {
             showNipple();
         }
+        isActive = true;
 
     });
     socket.on("stop", function(data) {
         console.log("command lost");
-        $("#lscat-video-area").css("border", "5px solid white");
+        $(".lscat-video-area").css("border", "5px solid white");
         $(".lscat-ctrls").hide();
         hideNipple();
+        isActive = false;
     });
 
     socket.on("waitingTimeUpdate", function(data) {
@@ -96,7 +99,8 @@ function showOrHideNipple() {
                 manager = createNippleManager();
                 initialManagerCreate = false;
             }
-            showNipple();
+            if(isActive)
+                showNipple();
         } else {
             hideNipple();
         }
@@ -106,7 +110,7 @@ function showOrHideNipple() {
 
 function createNippleManager() {
     var manager = nipplejs.create({
-        zone: document.getElementById("lscat-video-area"),
+        zone: document.getElementsByClassName("lscat-video-area")[0],
         mode: 'static',
         position: {right: '100px', bottom: '80px'},
         color: 'red'
